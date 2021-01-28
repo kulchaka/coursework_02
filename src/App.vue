@@ -2,8 +2,8 @@
   <div class="container column">
     <form class="card card-w30">
       <form-options title="Тип блока" :options="options"></form-options>
-      <form-text title="Значение"></form-text>
-      <app-button text="добавить" color="primary"></app-button>
+      <form-text title="Значение" v-model="inputText"></form-text>
+      <app-button text="добавить" :disabled="disabledBtn" color="primary"></app-button>
     </form>
 
     <div class="card card-w70">
@@ -46,12 +46,21 @@ import AppButton from './components/AppButton'
 export default {
   data () {
     return {
+      inputText: '',
       options: [
         { value: 'title', title: 'Заголовок' },
         { value: 'subtitle', title: 'Подзаголовок' },
         { value: 'avatar', title: 'Аватар' },
         { value: 'text', title: 'Текст' }
       ]
+    }
+  },
+  computed: {
+    disabledBtn () {
+      if (this.inputText.length < 3) {
+        return true
+      }
+      return false
     }
   },
   components: { FormOptions, FormText, AppButton }
