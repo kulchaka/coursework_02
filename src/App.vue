@@ -1,70 +1,119 @@
 <template>
   <div class="container column">
-    <form class="card card-w30">
-      <div class="form-control">
-        <label for="type">Тип блока</label>
-        <select id="type">
-          <option value="title">Заголовок</option>
-          <option value="subtitle">Подзаголовок</option>
-          <option value="avatar">Аватар</option>
-          <option value="text">Текст</option>
-        </select>
-      </div>
-
-      <div class="form-control">
-        <label for="value">Значение</label>
-        <textarea id="value" rows="3"></textarea>
-      </div>
-
-      <button class="btn primary">Добавить</button>
+    <form class="card card-w30" @submit.prevent="formSub">
+      <form-options
+        title="Тип блока"
+        :options="arrOptions"
+        v-model="selected"
+      ></form-options>
+      <form-text title="Значение" v-model.trim="inputText"></form-text>
+        <app-button
+          text="добавить"
+          :disabled="disabledBtn"
+          color="primary"
+        ></app-button>
     </form>
 
     <div class="card card-w70">
-      <h1>Резюме Nickname</h1>
-      <div class="avatar">
-        <img src="https://cdn.dribbble.com/users/5592443/screenshots/14279501/drbl_pop_r_m_rick_4x.png">
-      </div>
-      <h2>Опыт работы</h2>
-      <p>
-        главный герой американского мультсериала «Рик и Морти», гениальный учёный, изобретатель, атеист (хотя в некоторых сериях он даже молится Богу, однако, каждый раз после чудесного спасения ссылается на удачу и вновь отвергает его существование), алкоголик, социопат, дедушка Морти. На момент начала третьего сезона ему 70 лет[1]. Рик боится пиратов, а его главной слабостью является некий - "Санчезиум". Исходя из того, что существует неограниченное количество вселенных, существует неограниченное количество Риков, герой сериала предположительно принадлежит к измерению С-137. В серии комикcов Рик относится к измерению C-132, а в игре «Pocket Mortys» — к измерению C-123[2]. Прототипом Рика Санчеза является Эмметт Браун, герой кинотрилогии «Назад в будущее»[3].
-      </p>
-      <h3>Добавьте первый блок, чтобы увидеть результат</h3>
+      <template v-for="(item, index) in arrBlocks" :key="index">
+
+        <header-block :title="item.text" v-if="item.tag === 'h1'"></header-block>
+
+        <subtitle-block :title="item.text" v-if="item.tag === 'h2'"></subtitle-block>
+
+        <avatar-block :link="item.text" v-if="item.tag === 'src'"></avatar-block>
+
+        <text-block :title="item.text" v-if="item.tag === 'p'"></text-block>
+
+      </template>
+      <h3 v-if="!arrBlocks.length">Добавьте первый блок, чтобы увидеть результат</h3>
     </div>
   </div>
   <div class="container">
     <p>
-      <button class="btn primary">Загрузить комментарии</button>
+      <app-button
+          text="Загрузить комментарии"
+          color="primary"
+          @click="renderComments"
+        ></app-button>
     </p>
     <div class="card">
-      <h2>Комментарии</h2>
-      <ul class="list">
-        <li class="list-item">
-          <div>
-            <p><strong>test@microsoft.com</strong></p>
-            <small>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi, reiciendis.</small>
-          </div>
-        </li>
-      </ul>
+      <subtitle-block title="Комментарии"></subtitle-block>
+      <list-comments
+        :comments="arrComments"
+        v-if="arrComments.length"
+      ></list-comments>
     </div>
-    <div class="loader"></div>
+    <div class="loader" v-if="loader === true"></div>
   </div>
 </template>
 
 <script>
-export default {
 
+import FormOptions from './components/FormOptions'
+import FormText from './components/FormText'
+import AppButton from './components/AppButton'
+import HeaderBlock from './components/HeaderBlock'
+import SubtitleBlock from './components/SubtitleBlock'
+import AvatarBlock from './components/AvatarBlock'
+import TextBlock from './components/TextBlock'
+import ListComments from './components/ListComments'
+import axios from 'axios'
+
+export default {
+  data () {
+    return {
+      inputText: '',
+      selected: 'h1',
+      arrOptions: [
+        { tag: 'h1', value: 'Заголовок' },
+        { tag: 'h2', value: 'Подзаголовок' },
+        { tag: 'src', value: 'Аватар' },
+        { tag: 'p', value: 'Текст' }
+      ],
+      arrBlocks: [],
+      arrComments: [],
+      loader: false
+    }
+  },
+  methods: {
+    formSub () {
+      this.arrBlocks.push({ tag: `${this.selected}`, text: `${this.inputText} ` })
+      this.selected = 'h1'
+      this.inputText = ''
+    },
+    async renderComments () {
+      this.loader = true
+      try {
+        const { data } = await axios.get('https://jsonplaceholder.typicode.com/comments?_limit=42')
+        if (!data) {
+          throw new Error('the list is empty')
+        }
+        const res = Object.keys(data).map(key => {
+          return {
+            email: data[key].email,
+            text: data[key].body
+          }
+        })
+        this.loader = false
+        this.arrComments = res
+      } catch (error) {
+        this.loader = true
+        console.log(error.message)
+      }
+    }
+  },
+  computed: {
+    disabledBtn () {
+      if (this.inputText.length < 3) {
+        return true
+      }
+      return false
+    }
+  },
+  components: { FormOptions, FormText, AppButton, HeaderBlock, SubtitleBlock, AvatarBlock, TextBlock, ListComments }
 }
 </script>
 
 <style>
-  .avatar {
-    display: flex;
-    justify-content: center;
-  }
-
-  .avatar img {
-    width: 150px;
-    height: auto;
-    border-radius: 50%;
-  }
 </style>
