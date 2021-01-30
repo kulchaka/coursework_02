@@ -1,4 +1,4 @@
-# https://github.com/kulchaka/coursework_01
+# https://github.com/kulchaka/coursework_02
 
 - Coursework #2
 
