@@ -34,6 +34,8 @@ You can also see an example by following the link below:
 
 #### https://kulchaka.github.io/coursework_02/
 
+#### https://coursework02-vue.web.app
+
 - this project uses: HTML,CSS,GIT and Vue JS 3, AXIOS
 
 - autor: Andrii Kulchytskyi <kulchaka@gmail.com>
