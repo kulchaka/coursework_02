@@ -1,16 +1,23 @@
 <template>
   <div class="form-control">
     <label for="type">{{ title }}</label>
-      <select id="type">
-        <option v-for="(item, index) in options" :key="index" :value="item.value">{{ item.title }}</option>
+      <select :value="modelValue" @change="change">
+        <option v-for="(item, index) in options" :key="index" :value="index">{{ item }}</option>
       </select>
   </div>
 </template>
 <script>
 export default {
+  emits: ['update:modelValue'],
   props: {
+    modelValue: String,
     title: String,
-    options: Array
+    options: Object
+  },
+  methods: {
+    change (event) {
+      this.$emit('update:modelValue', event.target.value)
+    }
   }
 }
 </script>
