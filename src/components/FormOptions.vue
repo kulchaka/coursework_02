@@ -2,7 +2,7 @@
   <div class="form-control">
     <label for="type">{{ title }}</label>
       <select :value="modelValue" @change="change">
-        <option v-for="(item, index) in options" :key="index" :value="index">{{ item }}</option>
+        <option v-for="(item, index) in options" :key="index" :value="item.tag">{{ item.value }}</option>
       </select>
   </div>
 </template>
@@ -12,7 +12,7 @@ export default {
   props: {
     modelValue: String,
     title: String,
-    options: Object
+    options: Array
   },
   methods: {
     change (event) {
