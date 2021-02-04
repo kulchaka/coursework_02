@@ -1,15 +1,8 @@
 <template>
-  <div class="avatar">
-    <img :src="link" alt="avatar">
+ <div class="avatar">
+    <img :src="$attrs.value" alt="avatar">
   </div>
 </template>
-<script>
-export default {
-  props: {
-    link: String
-  }
-}
-</script>
 <style scoped>
   .avatar {
     display: flex;

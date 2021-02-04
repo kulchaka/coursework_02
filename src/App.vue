@@ -14,20 +14,8 @@
         ></app-button>
     </form>
 
-    <div class="card card-w70">
-      <template v-for="(item, index) in arrBlocks" :key="index">
+    <resume-block :blocks="arrBlocks"></resume-block>
 
-        <header-block :title="item.text" v-if="item.tag === 'h1'"></header-block>
-
-        <subtitle-block :title="item.text" v-if="item.tag === 'h2'"></subtitle-block>
-
-        <avatar-block :link="item.text" v-if="item.tag === 'src'"></avatar-block>
-
-        <text-block :title="item.text" v-if="item.tag === 'p'"></text-block>
-
-      </template>
-      <h3 v-if="!arrBlocks.length">Добавьте первый блок, чтобы увидеть результат</h3>
-    </div>
   </div>
   <div class="container">
     <p>
@@ -53,23 +41,21 @@
 import FormOptions from './components/FormOptions'
 import FormText from './components/FormText'
 import AppButton from './components/AppButton'
-import HeaderBlock from './components/HeaderBlock'
 import SubtitleBlock from './components/SubtitleBlock'
-import AvatarBlock from './components/AvatarBlock'
-import TextBlock from './components/TextBlock'
 import ListComments from './components/ListComments'
+import ResumeBlock from './components/ResumeBlock'
 import axios from 'axios'
 
 export default {
   data () {
     return {
       inputText: '',
-      selected: 'h1',
+      selected: 'title',
       arrOptions: [
-        { tag: 'h1', value: 'Заголовок' },
-        { tag: 'h2', value: 'Подзаголовок' },
-        { tag: 'src', value: 'Аватар' },
-        { tag: 'p', value: 'Текст' }
+        { tag: 'title', value: 'Заголовок' },
+        { tag: 'subtitle', value: 'Подзаголовок' },
+        { tag: 'imglink', value: 'Аватар' },
+        { tag: 'text', value: 'Текст' }
       ],
       arrBlocks: [],
       arrComments: [],
@@ -79,7 +65,7 @@ export default {
   methods: {
     formSub () {
       this.arrBlocks.push({ tag: `${this.selected}`, text: `${this.inputText} ` })
-      this.selected = 'h1'
+      this.selected = 'title'
       this.inputText = ''
     },
     async renderComments () {
@@ -111,7 +97,7 @@ export default {
       return false
     }
   },
-  components: { FormOptions, FormText, AppButton, HeaderBlock, SubtitleBlock, AvatarBlock, TextBlock, ListComments }
+  components: { FormOptions, FormText, AppButton, SubtitleBlock, ListComments, ResumeBlock }
 }
 </script>
 
